@@ -8,6 +8,7 @@ public class MyCoffeeMachine implements CoffeeMachine{
 
 	private ComponentsFactory factory;
 	private int centavos = 0;
+	private int inteiro = 0;
 
 	public MyCoffeeMachine(ComponentsFactory factory) {
 		this.factory = factory;
@@ -15,9 +16,11 @@ public class MyCoffeeMachine implements CoffeeMachine{
 	}
 
 	public void insertCoin(Coin dime) {
-		centavos = (dime.getValue())%100;
+		
+		centavos = dime.getValue()%100;
+		inteiro =dime.getValue()/100;
 		System.out.println(centavos);
-		factory.getDisplay().info("Total: US$ +"+centavos);
+		factory.getDisplay().info("Total: US$ "+inteiro +"."+centavos);
 		
 		
 	}
