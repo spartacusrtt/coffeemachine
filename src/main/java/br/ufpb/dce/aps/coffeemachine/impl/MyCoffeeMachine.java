@@ -17,8 +17,8 @@ public class MyCoffeeMachine implements CoffeeMachine{
 
 	public void insertCoin(Coin dime) {
 		
-		centavos = dime.getValue()%100;
-		inteiro =dime.getValue()/100;
+		centavos += dime.getValue()%100;
+		inteiro +=dime.getValue()/100;
 		System.out.println(centavos);
 		factory.getDisplay().info("Total: US$ "+inteiro +"."+centavos);
 		
