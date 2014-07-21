@@ -1,6 +1,7 @@
 package br.ufpb.dce.aps.coffeemachine.impl;
 
 import br.ufpb.dce.aps.coffeemachine.CoffeeMachine;
+import br.ufpb.dce.aps.coffeemachine.CoffeeMachineException;
 import br.ufpb.dce.aps.coffeemachine.Coin;
 import br.ufpb.dce.aps.coffeemachine.ComponentsFactory;
 
@@ -16,6 +17,10 @@ public class MyCoffeeMachine implements CoffeeMachine{
 	}
 
 	public void insertCoin(Coin dime) {
+		
+		if(dime == null){
+			 throw new CoffeeMachineException("null coin");
+		}
 		
 		centavos += dime.getValue()%100;
 		inteiro +=dime.getValue()/100;
