@@ -29,6 +29,13 @@ public class MyCoffeeMachine implements CoffeeMachine{
 		
 		
 	}
+
+	public void cancel() {
+		if(centavos == 0 && inteiro ==0){
+			 throw new CoffeeMachineException("null coin");
+		}
+		
+	}
 	
 	
 
