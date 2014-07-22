@@ -1,5 +1,7 @@
 package br.ufpb.dce.aps.coffeemachine.impl;
 
+import java.util.ArrayList;
+
 import br.ufpb.dce.aps.coffeemachine.CoffeeMachine;
 import br.ufpb.dce.aps.coffeemachine.CoffeeMachineException;
 import br.ufpb.dce.aps.coffeemachine.Coin;
@@ -11,7 +13,8 @@ public class MyCoffeeMachine implements CoffeeMachine{
 	private ComponentsFactory factory;
 	private int centavos = 0;
 	private int inteiro = 0;
-	private Coin dime;
+	
+	private ArrayList<Coin> spartacus= new ArrayList();
 
 	public MyCoffeeMachine(ComponentsFactory factory) {
 		this.factory = factory;
@@ -20,7 +23,7 @@ public class MyCoffeeMachine implements CoffeeMachine{
 
 	public void insertCoin(Coin dime) {
 		
-		this.dime = dime;
+		this.spartacus.add(dime);
 		if(dime == null){
 			 throw new CoffeeMachineException("null coin");
 		}
@@ -38,7 +41,17 @@ public class MyCoffeeMachine implements CoffeeMachine{
 			 throw new CoffeeMachineException("null coin");
 		}
 		factory.getDisplay().warn(Messages.CANCEL_MESSAGE);
-		factory.getCashBox().release(dime);
+		
+		for(Coin re: Coin.reverse()){
+			for(Coin li: spartacus){
+				if(li == re)				
+				factory.getCashBox().release(li);			
+			}
+			
+			
+		}
+		
+		
 		factory.getDisplay().info(Messages.INSERT_COINS_MESSAGE);
 		
 	}
