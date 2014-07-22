@@ -49,8 +49,7 @@ public class MyCoffeeMachine implements CoffeeMachine{
 			}
 			
 			
-		}
-		
+		}	
 		
 		factory.getDisplay().info(Messages.INSERT_COINS_MESSAGE);
 		
