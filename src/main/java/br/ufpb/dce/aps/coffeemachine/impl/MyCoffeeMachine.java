@@ -1,11 +1,14 @@
 package br.ufpb.dce.aps.coffeemachine.impl;
 
+import static org.mockito.Matchers.anyDouble;
+
 import java.util.ArrayList;
 
 import br.ufpb.dce.aps.coffeemachine.CoffeeMachine;
 import br.ufpb.dce.aps.coffeemachine.CoffeeMachineException;
 import br.ufpb.dce.aps.coffeemachine.Coin;
 import br.ufpb.dce.aps.coffeemachine.ComponentsFactory;
+import br.ufpb.dce.aps.coffeemachine.Drink;
 import br.ufpb.dce.aps.coffeemachine.Messages;
 
 public class MyCoffeeMachine implements CoffeeMachine{
@@ -40,7 +43,7 @@ public class MyCoffeeMachine implements CoffeeMachine{
 		if(centavos == 0 && inteiro ==0){
 			 throw new CoffeeMachineException("null coin");
 		}
-		factory.getDisplay().warn(Messages.CANCEL_MESSAGE);
+		factory.getDisplay().warn(Messages.CANCEL);
 		
 		for(Coin re: Coin.reverse()){
 			for(Coin li: spartacus){
@@ -51,7 +54,30 @@ public class MyCoffeeMachine implements CoffeeMachine{
 			
 		}	
 		
-		factory.getDisplay().info(Messages.INSERT_COINS_MESSAGE);
+		factory.getDisplay().info(Messages.INSERT_COINS);
+		
+	}
+
+	public void select(Drink drink) {
+		
+		factory.getCupDispenser().contains(1);	
+		factory.getWaterDispenser().contains(0.1);
+		factory.getCoffeePowderDispenser().contains(0.1);
+		
+		
+		factory.getDisplay().info(Messages.MIXING);
+		factory.getCoffeePowderDispenser().release(anyDouble());
+		factory.getWaterDispenser().release(anyDouble());
+		
+		factory.getDisplay().info(Messages.RELEASING);
+		factory.getCupDispenser().release(1);
+		factory.getDrinkDispenser().release(anyDouble());
+		factory.getDisplay().info(Messages.TAKE_DRINK);		
+		
+		factory.getDisplay().info("Insert coins and select a drink!");
+		
+		
+		
 		
 	}
 	
