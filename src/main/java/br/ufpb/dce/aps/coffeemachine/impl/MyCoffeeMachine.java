@@ -64,10 +64,19 @@ public class MyCoffeeMachine implements CoffeeMachine{
 		factory.getWaterDispenser().contains(0.1);
 		factory.getCoffeePowderDispenser().contains(0.1);
 		
+		if(drink == Drink.BLACK_SUGAR){
+			factory.getSugarDispenser().contains(0.1);
+		}
+		
 		
 		factory.getDisplay().info(Messages.MIXING);
 		factory.getCoffeePowderDispenser().release(anyDouble());
 		factory.getWaterDispenser().release(anyDouble());
+		
+		if(drink == Drink.BLACK_SUGAR){
+			factory.getSugarDispenser().release(0.1);
+		}
+		
 		
 		factory.getDisplay().info(Messages.RELEASING);
 		factory.getCupDispenser().release(1);
