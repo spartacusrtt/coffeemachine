@@ -84,6 +84,7 @@ public class MyCoffeeMachine implements CoffeeMachine{
 		factory.getDisplay().info(Messages.TAKE_DRINK);		
 		
 		factory.getDisplay().info("Insert coins and select a drink!");
+		spartacus.clear();
 		
 		
 		
