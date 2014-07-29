@@ -16,7 +16,7 @@ public class MyCoffeeMachine implements CoffeeMachine{
 	private ComponentsFactory factory;
 	private int centavos = 0;
 	private int inteiro = 0;
-	
+
 	private ArrayList<Coin> spartacus= new ArrayList();
 
 	public MyCoffeeMachine(ComponentsFactory factory) {
@@ -25,72 +25,82 @@ public class MyCoffeeMachine implements CoffeeMachine{
 	}
 
 	public void insertCoin(Coin dime) {
-		
+
 		this.spartacus.add(dime);
 		if(dime == null){
-			 throw new CoffeeMachineException("null coin");
+			throw new CoffeeMachineException("null coin");
 		}
-		
+
 		centavos += dime.getValue()%100;
 		inteiro +=dime.getValue()/100;
 		System.out.println(centavos);
 		factory.getDisplay().info("Total: US$ "+inteiro +"."+centavos);
-		
-		
+
+
 	}
 
 	public void cancel() {
 		if(centavos == 0 && inteiro ==0){
-			 throw new CoffeeMachineException("null coin");
+			throw new CoffeeMachineException("null coin");
 		}
 		factory.getDisplay().warn(Messages.CANCEL);
-		
+
 		for(Coin re: Coin.reverse()){
 			for(Coin li: spartacus){
 				if(li == re)				
-				factory.getCashBox().release(li);			
+					factory.getCashBox().release(li);			
 			}
-			
-			
+
+
 		}	
-		
+
 		factory.getDisplay().info(Messages.INSERT_COINS);
-		
+
 	}
 
 	public void select(Drink drink) {
-		
-		factory.getCupDispenser().contains(1);	
+		factory.getCupDispenser().contains(1);			
 		factory.getWaterDispenser().contains(0.1);
-		factory.getCoffeePowderDispenser().contains(0.1);
 		
-		if(drink == Drink.BLACK_SUGAR){
-			factory.getSugarDispenser().contains(0.1);
+		if(!factory.getCoffeePowderDispenser().contains(0.1)){	
+			
+			factory.getDisplay().warn("Out of Coffee Powder");
+			factory.getCashBox().release(Coin.quarter);
+			factory.getCashBox().release(Coin.dime);
+			
+			factory.getDisplay().info("Insert coins and select a drink!");
+
+
+
+		}else{
+			if(drink == Drink.BLACK_SUGAR){
+				factory.getSugarDispenser().contains(0.1);
+			}
+
+
+			factory.getDisplay().info(Messages.MIXING);
+			factory.getCoffeePowderDispenser().release(anyDouble());
+			factory.getWaterDispenser().release(anyDouble());
+
+			if(drink == Drink.BLACK_SUGAR){
+				factory.getSugarDispenser().release(0.1);
+			}
+
+
+			factory.getDisplay().info(Messages.RELEASING);
+			factory.getCupDispenser().release(1);
+			factory.getDrinkDispenser().release(anyDouble());
+			factory.getDisplay().info(Messages.TAKE_DRINK);		
+
+			factory.getDisplay().info("Insert coins and select a drink!");
+			spartacus.clear();
+
+
+
+
 		}
-		
-		
-		factory.getDisplay().info(Messages.MIXING);
-		factory.getCoffeePowderDispenser().release(anyDouble());
-		factory.getWaterDispenser().release(anyDouble());
-		
-		if(drink == Drink.BLACK_SUGAR){
-			factory.getSugarDispenser().release(0.1);
-		}
-		
-		
-		factory.getDisplay().info(Messages.RELEASING);
-		factory.getCupDispenser().release(1);
-		factory.getDrinkDispenser().release(anyDouble());
-		factory.getDisplay().info(Messages.TAKE_DRINK);		
-		
-		factory.getDisplay().info("Insert coins and select a drink!");
-		spartacus.clear();
-		
-		
-		
-		
 	}
-	
-	
+
+
 
 }
