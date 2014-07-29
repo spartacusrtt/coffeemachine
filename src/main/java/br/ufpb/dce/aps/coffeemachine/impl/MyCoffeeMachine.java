@@ -60,30 +60,38 @@ public class MyCoffeeMachine implements CoffeeMachine{
 
 	public void select(Drink drink) {
 		factory.getCupDispenser().contains(1);			
-		factory.getWaterDispenser().contains(0.1);
+		/*factory.getWaterDispenser().contains(0.1);*/
+		
+		if(!factory.getWaterDispenser().contains(0.1)){
+			factory.getDisplay().warn("Out of Water");
+			factory.getCashBox().release(Coin.quarter);
+			factory.getCashBox().release(Coin.dime);
+
+			factory.getDisplay().info("Insert coins and select a drink!");
+			return ;
+		}
 		
 		if(!factory.getCoffeePowderDispenser().contains(0.1)){	
-			
+
 			factory.getDisplay().warn("Out of Coffee Powder");
 			factory.getCashBox().release(Coin.quarter);
 			factory.getCashBox().release(Coin.dime);
-			
+
 			factory.getDisplay().info("Insert coins and select a drink!");
 			return ;
-			
+
 		}
 
-		else{			
-			
-			
+		else{	
+
 			if(drink == Drink.BLACK_SUGAR){
 				if(!factory.getSugarDispenser().contains(0.1)){
 					factory.getDisplay().warn("Out of Sugar");
 					factory.getCashBox().release(Coin.halfDollar);
-					
+
 					factory.getDisplay().info("Insert coins and select a drink!");
 					return ;
-					
+
 				}
 			}
 
