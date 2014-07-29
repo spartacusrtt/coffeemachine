@@ -112,6 +112,7 @@ public class MyCoffeeMachine implements CoffeeMachine{
 				factory.getSugarDispenser().release(0.1);
 			}
 
+			
 
 			factory.getDisplay().info(Messages.RELEASING);
 			factory.getCupDispenser().release(1);
