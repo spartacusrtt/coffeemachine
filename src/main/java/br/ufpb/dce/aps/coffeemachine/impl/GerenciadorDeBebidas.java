@@ -9,7 +9,7 @@ public class GerenciadorDeBebidas {
 	
 	private ComponentsFactory factory;
 	private Bebidas bebida;
-	private double valor = 35;
+	private double valorBebida = 35;
 	
 	public GerenciadorDeBebidas(ComponentsFactory factory){
 		this.factory = factory;
@@ -71,6 +71,6 @@ public class GerenciadorDeBebidas {
 	}	
 
 	public double getValor(){
-		return this.valor;
+		return this.valorBebida;
 	}
 }
