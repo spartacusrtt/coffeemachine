@@ -1,11 +1,6 @@
 package br.ufpb.dce.aps.coffeemachine.impl;
 
-import static org.mockito.Matchers.anyDouble;
-
 import java.util.ArrayList;
-import java.util.List;
-
-import org.objenesis.instantiator.basic.NewInstanceInstantiator;
 
 import br.ufpb.dce.aps.coffeemachine.CoffeeMachine;
 import br.ufpb.dce.aps.coffeemachine.CoffeeMachineException;
@@ -15,136 +10,99 @@ import br.ufpb.dce.aps.coffeemachine.Drink;
 import br.ufpb.dce.aps.coffeemachine.Messages;
 
 public class MyCoffeeMachine implements CoffeeMachine {
-	
 
-	private ComponentsFactory factory;
-	private int centavos = 0;
+	private int total;
 	private int inteiro = 0;
-
-	private ArrayList<Coin> spartacus = new ArrayList();
+	private int centavos = 0;
+	private ComponentsFactory factory;
+	private ArrayList<Coin> spartacus = new ArrayList<Coin>();
+	private GerenciadorDeBebidas gerenteBebidas;
+	private Coin[] reverso = Coin.reverse();
 
 	public MyCoffeeMachine(ComponentsFactory factory) {
 		this.factory = factory;
-		factory.getDisplay().info("Insert coins and select a drink!");
+		this.gerenteBebidas = new GerenciadorDeBebidas(this.factory);
+		this.factory.getDisplay().info(Messages.INSERT_COINS);
 	}
 
-	private List contCoins(int change){
-		ArrayList<Coin> spar = new ArrayList();
-		for(R in Reverse){
-			while(R.value <= change){
-				//cashbox.count(T);
-				spar.add(R);
-				change=change - R.value;
+	public void insertCoin(Coin dime) throws CoffeeMachineException {
+		try {
+			spartacus.add(dime);
+			total += dime.getValue();
+			inteiro = total / 100;
+			centavos = total % 100;
+			factory.getDisplay().info("Total: US$ " + inteiro + "." + centavos);
+		} catch (NullPointerException e) {
+			throw new CoffeeMachineException("moeda invalida");
+		}
+	}
+
+	public void cancel() throws CoffeeMachineException {
+		this.cancel(true);
+	}
+		
+	public void cancel(Boolean confirm) {
+		if (this.total == 0) {
+			throw new CoffeeMachineException("sem moedas");
+		}
+		if (this.spartacus.size() > 0) {
+			if(confirm){
+				this.factory.getDisplay().warn(Messages.CANCEL);
 			}
-		}
-		return spar;
-	}
-	
-	public void insertCoin(Coin dime) {
-
-		this.spartacus.add(dime);
-		if (dime == null) {
-			throw new CoffeeMachineException("null coin");
-		}
-
-		centavos += dime.getValue() % 100;
-		inteiro += dime.getValue() / 100;
-		System.out.println(centavos);
-		factory.getDisplay().info("Total: US$ " + inteiro + "." + centavos);
-
-	}
-
-	public void cancel() {
-		if (centavos == 0 && inteiro == 0) {
-			throw new CoffeeMachineException("null coin");
-		}
-		factory.getDisplay().warn(Messages.CANCEL);
-
-		for (Coin re : Coin.reverse()) {
-			for (Coin li : spartacus) {
-				if (li == re)
-					factory.getCashBox().release(li);
+			for (Coin re : this.reverso) {
+				for (Coin aux : this.spartacus) {
+					if (aux == re) {
+						this.factory.getCashBox().release(aux);
+					}
+				}
 			}
-
+			total = 0;
+			spartacus.clear();
 		}
-
 		factory.getDisplay().info(Messages.INSERT_COINS);
-
 	}
 	
+	public void calculaTroco (double troco){
+		double aux = troco;
+		for(Coin re : reverso){
+			while(re.getValue() <= aux ){
+				factory.getCashBox().count (re);
+				aux -= re.getValue(); 
+			}
+		}
+	}
+	
+	public void liberaTroco (double troco){
+		for(Coin re : reverso){
+			while(re.getValue() <= troco ){
+				factory.getCashBox().release (re);
+				troco -= re.getValue(); 
+			}
+		}
+	}
 	
 	public void select(Drink drink) {
-		if (!factory.getCupDispenser().contains(1)) {
-			factory.getDisplay().warn("Out of Cup");
-			factory.getCashBox().release(Coin.quarter);
-			factory.getCashBox().release(Coin.dime);
 
-			factory.getDisplay().info("Insert coins and select a drink!");
+		this.gerenteBebidas.iniciarBebida(drink);		
+		if (!gerenteBebidas.conferirIngredientes()) {
+			cancel(false);
 			return;
 		}
-		if (!factory.getWaterDispenser().contains(0.1)) {
-			factory.getDisplay().warn("Out of Water");
-			factory.getCashBox().release(Coin.quarter);
-			factory.getCashBox().release(Coin.dime);
-			factory.getDisplay().info("Insert coins and select a drink!");
+		if(!gerenteBebidas.verificaAcucar()){ 
+			cancel(false);
 			return;
+		} 
+		if(total % gerenteBebidas.getValor() != 0 && total > gerenteBebidas.getValor()){
+			calculaTroco(total - gerenteBebidas.getValor());
 		}
-
-		if (!factory.getCoffeePowderDispenser().contains(0.1)) {
-
-			factory.getDisplay().warn("Out of Coffee Powder");
-			factory.getCashBox().release(Coin.quarter);
-			factory.getCashBox().release(Coin.dime);
-			factory.getDisplay().info("Insert coins and select a drink!");
-			return;
-
-		}
-
-		if (drink == Drink.BLACK_SUGAR) {
-			if (!factory.getSugarDispenser().contains(0.1)) {
-				factory.getDisplay().warn("Out of Sugar");
-				factory.getCashBox().release(Coin.halfDollar);
-
-				factory.getDisplay().info("Insert coins and select a drink!");
-				return;
-
-			}
-		}
+				
+		gerenteBebidas.misturarIngredientes();
+		gerenteBebidas.release();
 		
-		if (drink == Drink.WHITE || drink == Drink.WHITE_SUGAR) {
-			this.factory.getCreamerDispenser().contains(0.1);
-			
-		}if(drink == Drink.WHITE_SUGAR){
-			factory.getSugarDispenser().contains(0.1);
-			factory.getDisplay().warn("Out of Sugar");
-			factory.getCashBox().release(Coin.halfDollar);
-			factory.getDisplay().info("Insert coins and select a drink!");
-			return;
+		if(total % gerenteBebidas.getValor() != 0 && total > gerenteBebidas.getValor()){
+			liberaTroco(this.total - gerenteBebidas.getValor());
 		}
-		//local da chamada do metodo 
-		
-		
-		
-
-		factory.getDisplay().info(Messages.MIXING);
-		factory.getCoffeePowderDispenser().release(anyDouble());
-		factory.getWaterDispenser().release(anyDouble());
-
-		if (drink == Drink.BLACK_SUGAR) {
-			factory.getSugarDispenser().release(0.1);
-		}
-		if (drink == Drink.WHITE) {
-			this.factory.getCreamerDispenser().release(0.1);
-		}
-
-		factory.getDisplay().info(Messages.RELEASING);
-		factory.getCupDispenser().release(1);
-		factory.getDrinkDispenser().release(anyDouble());
-		factory.getDisplay().info(Messages.TAKE_DRINK);
-
-		factory.getDisplay().info("Insert coins and select a drink!");
-		spartacus.clear();
-
+		this.factory.getDisplay().info(Messages.INSERT_COINS);
+		this.spartacus.clear();
 	}
-
 }
