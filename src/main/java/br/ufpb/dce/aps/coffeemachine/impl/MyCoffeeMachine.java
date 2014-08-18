@@ -38,13 +38,13 @@ public class MyCoffeeMachine implements CoffeeMachine {
 	}
 
 	public void cancel() throws CoffeeMachineException {
-		this.cancel(true);
+		if (this.total == 0) {
+ 			throw new CoffeeMachineException("sem moedas inseridas");
+ 		}
+		cancel(true);
 	}
 		
-	public void cancel(Boolean confirm) {
-		if (this.total == 0) {
-			throw new CoffeeMachineException("sem moedas");
-		}
+	public void cancel(Boolean confirm) throws CoffeeMachineException{
 		if (this.spartacus.size() > 0) {
 			if(confirm){
 				this.factory.getDisplay().warn(Messages.CANCEL);
@@ -83,7 +83,14 @@ public class MyCoffeeMachine implements CoffeeMachine {
 	
 	public void select(Drink drink) {
 
-		this.gerenteBebidas.iniciarBebida(drink);		
+		if(total < gerenteBebidas.getValor() || total == 0){
+			factory.getDisplay().warn(Messages.NO_ENOUGHT_MONEY);
+			cancel(false);
+			return;
+		}
+		
+		gerenteBebidas.iniciarBebida(drink);
+		
 		if (!gerenteBebidas.conferirIngredientes()) {
 			cancel(false);
 			return;
@@ -100,9 +107,9 @@ public class MyCoffeeMachine implements CoffeeMachine {
 		gerenteBebidas.release();
 		
 		if(total % gerenteBebidas.getValor() != 0 && total > gerenteBebidas.getValor()){
-			liberaTroco(this.total - gerenteBebidas.getValor());
+			liberaTroco(total - gerenteBebidas.getValor());
 		}
-		this.factory.getDisplay().info(Messages.INSERT_COINS);
-		this.spartacus.clear();
+		factory.getDisplay().info(Messages.INSERT_COINS);
+		spartacus.clear();
 	}
 }
