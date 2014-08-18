@@ -12,8 +12,7 @@ import br.ufpb.dce.aps.coffeemachine.Messages;
 public class MyCoffeeMachine implements CoffeeMachine {
 
 	private int total;
-	private int inteiro = 0;
-	private int centavos = 0;
+	private int inteiro, centavos;
 	private ComponentsFactory factory;
 	private ArrayList<Coin> spartacus = new ArrayList<Coin>();
 	private GerenciadorDeBebidas gerenteBebidas;
@@ -21,16 +20,16 @@ public class MyCoffeeMachine implements CoffeeMachine {
 
 	public MyCoffeeMachine(ComponentsFactory factory) {
 		this.factory = factory;
-		this.gerenteBebidas = new GerenciadorDeBebidas(this.factory);
-		this.factory.getDisplay().info(Messages.INSERT_COINS);
+		gerenteBebidas = new GerenciadorDeBebidas(this.factory);
+		factory.getDisplay().info(Messages.INSERT_COINS);
 	}
 
 	public void insertCoin(Coin dime) throws CoffeeMachineException {
 		try {
-			spartacus.add(dime);
 			total += dime.getValue();
-			inteiro = total / 100;
-			centavos = total % 100;
+			spartacus.add(dime);
+			inteiro = total/100;
+			centavos = total%100;
 			factory.getDisplay().info("Total: US$ " + inteiro + "." + centavos);
 		} catch (NullPointerException e) {
 			throw new CoffeeMachineException("moeda invalida");
@@ -38,21 +37,22 @@ public class MyCoffeeMachine implements CoffeeMachine {
 	}
 
 	public void cancel() throws CoffeeMachineException {
-		if (this.total == 0) {
- 			throw new CoffeeMachineException("sem moedas inseridas");
- 		}
+		if (total == 0) {
+			throw new CoffeeMachineException("sem moedas inseridas");
+		}
 		cancel(true);
+		
 	}
 		
 	public void cancel(Boolean confirm) throws CoffeeMachineException{
-		if (this.spartacus.size() > 0) {
+		if (spartacus.size() > 0) {
 			if(confirm){
-				this.factory.getDisplay().warn(Messages.CANCEL);
+				factory.getDisplay().warn(Messages.CANCEL);
 			}
-			for (Coin re : this.reverso) {
-				for (Coin aux : this.spartacus) {
+			for (Coin re : reverso) {
+				for (Coin aux : spartacus) {
 					if (aux == re) {
-						this.factory.getCashBox().release(aux);
+						factory.getCashBox().release(aux);
 					}
 				}
 			}
@@ -62,17 +62,16 @@ public class MyCoffeeMachine implements CoffeeMachine {
 		factory.getDisplay().info(Messages.INSERT_COINS);
 	}
 	
-	public void calculaTroco (double troco){
-		double aux = troco;
+	public boolean calculaTroco (double troco){
 		for(Coin re : reverso){
-			while(re.getValue() <= aux ){
-				factory.getCashBox().count (re);
-				aux -= re.getValue(); 
+			if(re.getValue() <= troco && factory.getCashBox().count (re) > 0){
+					troco -= re.getValue();
 			}
-		}
+		}		
+		return (troco == 0);
 	}
 	
-	public void liberaTroco (double troco){
+	public void liberarTroco (double troco){
 		for(Coin re : reverso){
 			while(re.getValue() <= troco ){
 				factory.getCashBox().release (re);
@@ -82,13 +81,13 @@ public class MyCoffeeMachine implements CoffeeMachine {
 	}
 	
 	public void select(Drink drink) {
-
+		
 		if(total < gerenteBebidas.getValor() || total == 0){
 			factory.getDisplay().warn(Messages.NO_ENOUGHT_MONEY);
 			cancel(false);
 			return;
 		}
-		
+
 		gerenteBebidas.iniciarBebida(drink);
 		
 		if (!gerenteBebidas.conferirIngredientes()) {
@@ -100,14 +99,18 @@ public class MyCoffeeMachine implements CoffeeMachine {
 			return;
 		} 
 		if(total % gerenteBebidas.getValor() != 0 && total > gerenteBebidas.getValor()){
-			calculaTroco(total - gerenteBebidas.getValor());
+			if(!calculaTroco(total - gerenteBebidas.getValor())){
+				factory.getDisplay().warn(Messages.NO_ENOUGHT_CHANGE);
+				cancel(false);
+				return;
+			}
 		}
 				
 		gerenteBebidas.misturarIngredientes();
 		gerenteBebidas.release();
 		
 		if(total % gerenteBebidas.getValor() != 0 && total > gerenteBebidas.getValor()){
-			liberaTroco(total - gerenteBebidas.getValor());
+			liberarTroco(total - gerenteBebidas.getValor());
 		}
 		factory.getDisplay().info(Messages.INSERT_COINS);
 		spartacus.clear();
