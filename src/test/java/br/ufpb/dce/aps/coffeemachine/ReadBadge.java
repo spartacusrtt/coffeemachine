@@ -20,7 +20,7 @@ public class ReadBadge extends CoffeeMachineTest {
 		// Operation under test
 		insertCoins(Coin.dime);
 
-		// Verification
+		//Verification
 		verifyCannotInsertCoinsMessage(inOrder);
 		verifyReleaseCoins(inOrder, Coin.dime);
 	}
