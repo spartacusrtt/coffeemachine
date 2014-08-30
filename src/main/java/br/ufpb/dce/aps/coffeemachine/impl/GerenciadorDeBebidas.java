@@ -7,7 +7,7 @@ import br.ufpb.dce.aps.coffeemachine.Messages;
 public class GerenciadorDeBebidas {
 
 	private Bebidas bebida;
-	private int valor = 35;
+	private int valor = 35, valorPreto = 35;
 	private int valorCaldo = 25;
 
 	public void iniciarBebida(ComponentsFactory factory, Button button) {
@@ -17,7 +17,7 @@ public class GerenciadorDeBebidas {
 			bebida = new Branco(button);
 		} else {
 			bebida = new Bouillon(button);
-			valor = valorCaldo;
+			setValor(valorCaldo);
 		}
 	}
 
@@ -64,6 +64,10 @@ public class GerenciadorDeBebidas {
 		return valor;
 	}
 
+	public void setValor(int valor){
+		this.valor = valor;
+	}
+
 	public boolean conferirIngredientes(ComponentsFactory factory, Button button, int cup, int water, int powder, int cream, int bouillon) {
 		if (cup > 0) {
 			if (!factory.getCupDispenser().contains(cup)) {
@@ -94,5 +98,59 @@ public class GerenciadorDeBebidas {
 			}
 		}
 		return true;
+	}
+
+	public int getValorDaBebida(Button button){
+		if(button == Button.BUTTON_1){
+			return this.getValorPreto();
+		}
+		else if(button == Button.BUTTON_2){
+			return this.getValor();
+		}
+		else if(button == Button.BUTTON_3){
+			return this.getValor();
+		}
+		else if(button == Button.BUTTON_4){
+			return this.getValor();
+		}
+		else{
+			return getValorBouillon();
+		}
+	}
+
+	public int getValorPreto() {
+		return valorPreto;
+	}
+	
+	public void setValorPreto(int priceCents) {
+		this.valorPreto = priceCents;
+		
+	}
+
+	public void setPrecoDaBebida(Button button, int priceCents) {
+		if(button == Button.BUTTON_1){
+			this.setValorPreto(priceCents);
+		}
+		else if(button == Button.BUTTON_2){
+			this.setValor(priceCents);
+		}
+		else if(button == Button.BUTTON_3){
+			this.setValor(priceCents);
+		}
+		else if(button == Button.BUTTON_4){
+			this.setValor(priceCents);
+		}
+		else{
+			this.setValorBouillon(priceCents);
+		}	
+	}
+
+	public int getValorBouillon() {
+		return valorCaldo;
+	}
+	
+	public void setValorBouillon(int priceCents) {
+		this.valorCaldo = priceCents;
+		
 	}
 }

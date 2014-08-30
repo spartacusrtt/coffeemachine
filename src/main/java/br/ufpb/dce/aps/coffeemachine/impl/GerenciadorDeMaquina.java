@@ -45,8 +45,8 @@ public class GerenciadorDeMaquina {
 		gerenteDeBebidas.misturarIngredientes(factory, button);
 		gerenteDeBebidas.release(factory);
 
-		if (gerenteFinanceiro.getTotal() >= gerenteDeBebidas.getValor()) {
-			gerenteFinanceiro.liberarTroco(factory, gerenteDeBebidas.getValor());
+		if (gerenteFinanceiro.getTotal() >= gerenteDeBebidas.getValorDaBebida(button)) {
+			gerenteFinanceiro.liberarTroco(factory, gerenteDeBebidas.getValorDaBebida(button));
 		}
 
 		factory.getDisplay().info(Messages.INSERT_COINS);
@@ -80,9 +80,7 @@ public class GerenciadorDeMaquina {
 	}
 
 	public void iniciar(ComponentsFactory factory) {
-		factory.getButtonDisplay().show("Black: $0.35", "White: $0.35",
-				"Black with sugar: $0.35", "White with sugar: $0.35",
-				"Bouillon: $0.25", null, null);
+		mensagemInicial(factory);
 		factory.getDisplay().info(Messages.INSERT_COINS);
 		setModo("moedas");
 	}
@@ -106,6 +104,19 @@ public class GerenciadorDeMaquina {
 
 	public String getModo(){
 		return modo;
+	}
+
+	public void mensagemInicial(ComponentsFactory factory){
+		int valor = gerenteDeBebidas.getValor();
+		int valorPreto = gerenteDeBebidas.getValorPreto();
+		int valorCaldo = gerenteDeBebidas.getValorBouillon();
+		factory.getButtonDisplay().show("Black: $0."+valorPreto, "White: $0."+valor,
+				"Black with sugar: $0."+valor, "White with sugar: $0."+valor,
+				"Bouillon: $0."+valorCaldo, null, null);
+	}
+	
+	public void setPrecoDaBebida(Button drink, int priceCents) {
+		gerenteDeBebidas.setPrecoDaBebida(drink, priceCents);	
 	}
 
 }
