@@ -1,7 +1,7 @@
 package br.ufpb.dce.aps.coffeemachine.impl;
 
 import br.ufpb.dce.aps.coffeemachine.ComponentsFactory;
-import br.ufpb.dce.aps.coffeemachine.Drink;
+import br.ufpb.dce.aps.coffeemachine.Button;
 import br.ufpb.dce.aps.coffeemachine.Messages;
 
 public class GerenciadorDeBebidas {
@@ -10,31 +10,31 @@ public class GerenciadorDeBebidas {
 	private int valor = 35;
 	private int valorCaldo = 25;
 
-	public void iniciarBebida(ComponentsFactory factory, Drink drink) {
-		if (drink == Drink.BLACK || drink == Drink.BLACK_SUGAR) {
-			bebida = new Preto(drink);
-		} else if (drink == Drink.WHITE || drink == Drink.WHITE_SUGAR) {
-			bebida = new Branco(drink);
+	public void iniciarBebida(ComponentsFactory factory, Button button) {
+		if (button == Button.BUTTON_1 || button == Button.BUTTON_3) {
+			bebida = new Preto(button);
+		} else if (button == Button.BUTTON_2 || button == Button.BUTTON_4) {
+			bebida = new Branco(button);
 		} else {
-			bebida = new Bouillon(drink);
+			bebida = new Bouillon(button);
 			valor = valorCaldo;
 		}
 	}
 
-	public boolean conferirIngredientes(ComponentsFactory factory, Drink drink) {
-		if (bebida.getDrink() == Drink.BLACK || bebida.getDrink() == Drink.BLACK_SUGAR) {
-			return (conferirIngredientes(factory, drink, 1, 100, 15, 0, 0));
+	public boolean conferirIngredientes(ComponentsFactory factory, Button button) {
+		if (bebida.getDrink() == Button.BUTTON_1|| bebida.getDrink() == Button.BUTTON_3) {
+			return (conferirIngredientes(factory, button, 1, 100, 15, 0, 0));
 
-		} else if (bebida.getDrink() == Drink.WHITE || bebida.getDrink() == Drink.WHITE_SUGAR) {
-			return (conferirIngredientes(factory, drink, 1, 80, 15, 20, 0));
+		} else if (bebida.getDrink() == Button.BUTTON_2 || bebida.getDrink() == Button.BUTTON_4) {
+			return (conferirIngredientes(factory, button, 1, 80, 15, 20, 0));
 		} else {
-			return (conferirIngredientes(factory, drink, 1, 100, 0, 0, 10));
+			return (conferirIngredientes(factory, button, 1, 100, 0, 0, 10));
 		}
 	}
 
 	public boolean verificaAcucar(ComponentsFactory factory) {
 
-		if (bebida.getDrink() == Drink.BLACK_SUGAR || bebida.getDrink() == Drink.WHITE_SUGAR) {
+		if (bebida.getDrink() == Button.BUTTON_3 || bebida.getDrink() == Button.BUTTON_4) {
 			if (!factory.getSugarDispenser().contains(5)) {
 				factory.getDisplay().warn(Messages.OUT_OF_SUGAR);
 				return false;
@@ -43,9 +43,9 @@ public class GerenciadorDeBebidas {
 		return true;
 	}
 
-	public void misturarIngredientes(ComponentsFactory factory, Drink drink) {
+	public void misturarIngredientes(ComponentsFactory factory, Button button) {
 		factory.getDisplay().info(Messages.MIXING);
-		if (bebida.getDrink() == Drink.BOUILLON) {
+		if (bebida.getDrink() == Button.BUTTON_5) {
 			factory.getBouillonDispenser().release(10);
 		} 
 		else {
@@ -64,7 +64,7 @@ public class GerenciadorDeBebidas {
 		return valor;
 	}
 
-	public boolean conferirIngredientes(ComponentsFactory factory, Drink drink, int cup, int water, int powder, int cream, int bouillon) {
+	public boolean conferirIngredientes(ComponentsFactory factory, Button button, int cup, int water, int powder, int cream, int bouillon) {
 		if (cup > 0) {
 			if (!factory.getCupDispenser().contains(cup)) {
 				factory.getDisplay().warn(Messages.OUT_OF_CUP);
@@ -81,7 +81,7 @@ public class GerenciadorDeBebidas {
 				return false;
 			}
 		}
-		if (bebida.getDrink() == Drink.WHITE || bebida.getDrink() == Drink.WHITE_SUGAR) {
+		if (bebida.getDrink() == Button.BUTTON_2 || bebida.getDrink() == Button.BUTTON_4) {
 			if (!factory.getCreamerDispenser().contains(cream)) {
 				factory.getDisplay().warn(Messages.OUT_OF_CREAMER);
 				return false;

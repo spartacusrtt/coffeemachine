@@ -3,7 +3,7 @@ package br.ufpb.dce.aps.coffeemachine.impl;
 import br.ufpb.dce.aps.coffeemachine.CoffeeMachine;
 import br.ufpb.dce.aps.coffeemachine.Coin;
 import br.ufpb.dce.aps.coffeemachine.ComponentsFactory;
-import br.ufpb.dce.aps.coffeemachine.Drink;
+import br.ufpb.dce.aps.coffeemachine.Button;
 
 public class MyCoffeeMachine implements CoffeeMachine {
 
@@ -19,13 +19,13 @@ public class MyCoffeeMachine implements CoffeeMachine {
 		gerenteDeCaixa.cancelar(factory);	
 	}
 	
-	public void select(Drink drink) {		
-		gerenteDeMaquina.iniciarPedido(factory, gerenteDeCaixa, drink);
+	public void select(Button button) {		
+		gerenteDeMaquina.iniciarPedido(factory, gerenteDeCaixa, button);
 	}
 
 	public void setFactory(ComponentsFactory factory) {
 		this.factory = factory;		
-		gerenteDeMaquina.iniciarComMoedas(factory);
+		gerenteDeMaquina.iniciar(factory);
 	}
 
 	public void readBadge(int badgeCode) {
